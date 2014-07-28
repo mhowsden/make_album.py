@@ -3,11 +3,15 @@
 import os
 from PIL import Image
 
+# imagemagick command to make the orientation correct (my camera doesn't
+# handle this correctly).  src and dest file can be the same
+# convert -auto-orient src.jpg dest.jpg
+
 # global settings
 image_width = 600
+album_title = "Album Name"
 
-
-print ("<html><body>")
+print ("<html><head><title>%s</title></head><body>" % album_title)
 print ("""
 <style type="text/css">
 body {
