@@ -11,33 +11,42 @@ from PIL import Image
 image_width = 600
 album_title = "Album Name"
 
-print ("<html><head><title>%s</title></head><body>" % album_title)
-print ("""
+template = """
+<html>
+  <head>
+    <title>{album_title}</title>
+  </head>
+  <body>
+
 <style type="text/css">
-body {
+
+body {{
   background-color: #999;
-}
-a {
+}}
+a {{
   display: block;
   margin: 20px;
-}
+}}
 
-img {
-  width: %spx;
-  max-width: 90%%;
+img {{
+  width: {image_width}px;
+  max-width: 90%;
   display: block;
   margin: auto;
-}
+}}
 
 </style>
 
-
-""" % image_width)
+  {photos_html}
+  </body>
+</html>
+"""
 
 # create thumbnail directory if it doesn't already exist
 if not os.path.exists(".thumbnails"):
     os.makedirs(".thumbnails")
 
+photos_html = ""
 for image_filename in os.listdir(os.getcwd()):
     if image_filename.find('jpg') >= 0:
         image = Image.open(image_filename)
@@ -46,7 +55,10 @@ for image_filename in os.listdir(os.getcwd()):
         new_height = image_width / ratio
         image.thumbnail((image_width,image_width*3),Image.ANTIALIAS)
         image.save(".thumbnails/%s" % image_filename)
-        print ('<a href="%s"><img src=".thumbnails/%s" alt="%s" /></a>'
-               % (image_filename,image_filename,image_filename))
+        photos_html += ('<a href="%s"><img src=".thumbnails/%s" alt="%s" /></a>\n'
+                        % (image_filename,image_filename,image_filename))
 
-print ("</body></html>")
+print template.format(album_title=album_title,
+                      image_width=image_width,
+                      photos_html=photos_html)
+
