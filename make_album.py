@@ -1,11 +1,15 @@
 #!/usr/bin/python
 
-import os
+import os, subprocess
 from PIL import Image
 
-# imagemagick command to make the orientation correct (my camera doesn't
+# example imagemagick command to make the orientation correct (my camera doesn't
 # handle this correctly).  src and dest file can be the same
 # convert -auto-orient src.jpg dest.jpg
+#
+# NOTE: this command is being called automatically in this script at the moment
+# so imagemagick's "convert" command is currently a required dependency
+
 
 # global settings
 image_width = 600
@@ -37,7 +41,8 @@ img {{
 
 </style>
 
-  {photos_html}
+  {photos_formatted}
+
   </body>
 </html>
 """
@@ -46,19 +51,28 @@ img {{
 if not os.path.exists(".thumbnails"):
     os.makedirs(".thumbnails")
 
-photos_html = ""
+photo_html = """
+    <a href="{image_filename}">
+      <img src=".thumbnails/{image_filename}" alt="{image_filename}" />
+    </a>
+"""
+
+photos_formatted = ""
 for image_filename in os.listdir(os.getcwd()):
     if image_filename.find('jpg') >= 0:
+        result = subprocess.call(
+            ['convert', '-auto-orient', image_filename, image_filename],
+            stdout=open('/dev/null', 'wb'), stderr=subprocess.STDOUT
+        )
         image = Image.open(image_filename)
         # determining the ratio of width to height
         ratio = float(image.size[0]) / float(image.size[1])
         new_height = image_width / ratio
-        image.thumbnail((image_width,image_width*3),Image.ANTIALIAS)
+        image.thumbnail((image_width, image_width*3), Image.ANTIALIAS)
         image.save(".thumbnails/%s" % image_filename)
-        photos_html += ('<a href="%s"><img src=".thumbnails/%s" alt="%s" /></a>\n'
-                        % (image_filename,image_filename,image_filename))
+        photos_formatted += photo_html.format(image_filename=image_filename)
 
 print template.format(album_title=album_title,
                       image_width=image_width,
-                      photos_html=photos_html)
+                      photos_formatted=photos_formatted)
 
