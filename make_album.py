@@ -3,17 +3,20 @@
 import os, subprocess
 from PIL import Image
 
-# example imagemagick command to make the orientation correct (my camera doesn't
+# imagemagick command to make the orientation correct (my camera doesn't
 # handle this correctly).  src and dest file can be the same
 # convert -auto-orient src.jpg dest.jpg
 #
-# NOTE: this command is being called automatically in this script at the moment
-# so imagemagick's "convert" command is currently a required dependency
+# NOTE: this command is being called automatically in this script
+# if it's available on the system path
 
 
 # global settings
 image_width = 600
 album_title = "Album Name"
+
+# supported image types only detected by lowercase extension
+supported_types = ['jpg','jpeg','gif','png']
 
 template = """
 <html>
@@ -59,11 +62,16 @@ photo_html = """
 
 photos_formatted = ""
 for image_filename in os.listdir(os.getcwd()):
-    if image_filename.find('jpg') >= 0:
-        result = subprocess.call(
-            ['convert', '-auto-orient', image_filename, image_filename],
-            stdout=open('/dev/null', 'wb'), stderr=subprocess.STDOUT
-        )
+    image_extension = os.path.splitext(image_filename)[1].strip(".").lower()
+    if image_extension in supported_types:
+        try:
+            result = subprocess.call(
+                ['convert', '-auto-orient', image_filename, image_filename],
+                stdout=open('/dev/null', 'wb'), stderr=subprocess.STDOUT
+            )
+        except OSError:
+            # convert is not installed on this system
+            pass
         image = Image.open(image_filename)
         # determining the ratio of width to height
         ratio = float(image.size[0]) / float(image.size[1])
