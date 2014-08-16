@@ -8,7 +8,7 @@ from PIL import Image
 # convert -auto-orient src.jpg dest.jpg
 
 # global settings
-image_width = 600
+image_width = 1000
 album_title = "Album Name"
 
 print ("<html><head><title>%s</title></head><body>" % album_title)
@@ -23,8 +23,8 @@ a {
 }
 
 img {
-  width: %spx;
-  max-width: 90%%;
+  max-width: %spx;
+  width: 100%%;
   display: block;
   margin: auto;
 }
