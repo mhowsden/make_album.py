@@ -13,7 +13,7 @@ from PIL import Image
 
 # global settings
 image_width = 1000
-album_title = "Album Name"
+album_title = "Vegas 2014 (AWS re:Invent)"
 
 # supported image types only detected by lowercase extension
 supported_types = ['jpg','jpeg','gif','png']
@@ -61,7 +61,7 @@ photo_html = """
 """
 
 photos_formatted = ""
-for image_filename in os.listdir(os.getcwd()):
+for image_filename in sorted(os.listdir(os.getcwd())):
     image_extension = os.path.splitext(image_filename)[1].strip(".").lower()
     if image_extension in supported_types:
         try:
