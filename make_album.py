@@ -13,7 +13,7 @@ from PIL import Image
 
 # global settings
 image_width = 1000
-album_title = "Vegas 2014 (AWS re:Invent)"
+album_title = "Album Name"
 
 # supported image types only detected by lowercase extension
 supported_types = ['jpg','jpeg','gif','png']
